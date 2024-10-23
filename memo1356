@@ -1,0 +1,110 @@
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout(true)
+        timeout(time: 30, unit: 'MINUTES')  // タイムアウト設定
+    }
+    tools {
+        jdk "jdk-17.0.10"
+        maven "maven_v3.8.6"
+    }
+    parameters {
+        booleanParam(name: "IS_TRIGGER", defaultValue: false, description: 'デプロイトリガー ※trueでデプロイ実行。')
+        booleanParam(name: "IS_CLEAN", defaultValue: false, description: 'ワークスペースのクリーンアップを実行するか')
+    }
+    environment {
+        GITLAB_CREDENTIALS_ID = "44552994-23d6-4264-ab28-ff38e448d9bc"
+        WORK_DIR = "work"
+        GLOBAL_SETTINGS = "${WORKSPACE}/${WORK_DIR}/settings.xml"
+        MAVEN_CACHE = "${WORKSPACE}/.m2" // キャッシュ用ディレクトリ
+        AWS_REGION = "ap-northeast-1"
+        IS_DEPLOY_SKIP = false
+    }
+    stages {
+        stage('Clean Workspace') {
+            when {
+                expression { params.IS_CLEAN == true }
+            }
+            steps {
+                cleanWs()
+            }
+        }
+
+        // Mavenキャッシュの取得
+        stage('Retrieve Cache') {
+            steps {
+                // Jenkins Pipeline Caching Plugin を使用してMavenのキャッシュを取得
+                cache(maxCacheSize: 1, caches: [
+                    pipelineCache(path: "${MAVEN_CACHE}", cacheKey: 'maven-cache', restoreKeys: ['maven-cache'])
+                ]) {
+                    echo "Cache restored successfully!"
+                }
+            }
+        }
+
+        stage('Checkout Repositories') {
+            parallel {
+                stage('Checkout Apm-Depend') {
+                    steps {
+                        checkout([$class: "GitSCM", 
+                            branches: [[name: "${params.TARGET_BRANCH}"]],
+                            userRemoteConfigs: [[credentialsId: "${GITLAB_CREDENTIALS_ID}", url: "${GIT_PATH_APM_DEPEND}"]]
+                        ])
+                    }
+                }
+                stage('Checkout Patch') {
+                    steps {
+                        checkout([$class: "GitSCM", 
+                            branches: [[name: "${params.TARGET_BRANCH}"]],
+                            userRemoteConfigs: [[credentialsId: "${GITLAB_CREDENTIALS_ID}", url: "${GIT_PATH_PATCH}"]]
+                        ])
+                    }
+                }
+            }
+        }
+
+        stage('Build Process') {
+            parallel {
+                stage('Pre-Build Apm-Depend') {
+                    steps {
+                        sh """
+                        mvn package \
+                        -f ${POM_APM_DEPEND_STANDARD_APP_PKG} \
+                        --global-settings ${GLOBAL_SETTINGS} \
+                        -DcomTypeA=${params.COMTYPEA} \
+                        -DskipTests=true \
+                        -Dmaven.repo.local=${MAVEN_CACHE}  // キャッシュを使ったビルド
+                        """
+                    }
+                }
+                stage('Build Main Apm-Depend') {
+                    steps {
+                        sh """
+                        mvn clean \
+                        package \
+                        -f ${POM_APM_DEPEND_STANDARD_APP} \
+                        --global-settings ${GLOBAL_SETTINGS} \
+                        -DcomTypeA=${params.COMTYPEA} \
+                        -DpkgVersion=${params.PKG_VERSION} \
+                        -DskipTests=true \
+                        -Dmaven.repo.local=${MAVEN_CACHE}  // キャッシュを使ったビルド
+                        """
+                    }
+                }
+            }
+        }
+
+        // キャッシュを保存して次回に活用
+        stage('Save Cache') {
+            steps {
+                cache(maxCacheSize: 1, caches: [
+                    pipelineCache(path: "${MAVEN_CACHE}", cacheKey: 'maven-cache', restoreKeys: ['maven-cache'])
+                ]) {
+                    echo "Cache saved successfully!"
+                }
+            }
+        }
+
+        // 他のステージが続きます...
+    }
+}

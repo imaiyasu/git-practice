@@ -1,0 +1,146 @@
+pipeline {
+    agent any
+    tools{
+        jdk 'jdk-17.0.10'
+        maven 'maven_v3.8.6'
+    }
+    parameters {
+        booleanParam(name: "IS_TRIGGER", defaultValue: false, description: 'デプロイトリガー ※trueでデプロイ実行。')
+    }    
+    environment {
+        // 環境変数
+        SONAR_CREDENTIALS_ID = "d30cf486-aa18-4547-9d97-76d8a8e21cef"
+        GITLAB_CREDENTIALS_ID = "44552994-23d6-4264-ab28-ff38e448d9bc"
+        WORK_DIR = "work"
+        GLOBAL_SETTINGS = "${WORKSPACE}/${WORK_DIR}/settings.xml"
+        POM_BASE_COMSRV_PARENT = "./blender-he2-${params.COMPANY}-base-comsrv-parent/pom.xml"
+        TEST_REPORTS = "**/surefire-reports/*.xml"
+        DEPLOY_SKIP_MESSAGE = "タグトリガーではないため、デプロイをスキップします。"
+        IS_DEPLOY_SKIP = false
+    }
+    stages {
+        // ワークスペースのクリーンアップ
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        // 全てのリポジトリを1度にチェックアウト
+        stage('Checkout Repositories') {
+            parallel {
+                stage('Checkout Base-Comsrv') {
+                    steps {
+                        checkout([$class: "GitSCM", 
+                        branches: [[name: "${params.TARGET_BRANCH}"]],
+                        userRemoteConfigs: [[credentialsId: "${GITLAB_CREDENTIALS_ID}", url: "${GIT_PATH_BASE_COMSRV}"]]
+                        ])
+                    }
+                }
+                stage('Checkout Base-Core-PKG') {
+                    steps {
+                        checkout([$class: "GitSCM", 
+                        branches: [[name: "${params.TARGET_BRANCH_PKG}"]],
+                        userRemoteConfigs: [[credentialsId: "${GITLAB_CREDENTIALS_ID}", url: "${GIT_PATH_BASE_CORE_PKG}"]]
+                        ])
+                    }
+                }
+                stage('Checkout Base-Db') {
+                    steps {
+                        checkout([$class: "GitSCM", 
+                        branches: [[name: "${params.TARGET_BRANCH}"]],
+                        userRemoteConfigs: [[credentialsId: "${GITLAB_CREDENTIALS_ID}", url: "${GIT_PATH_BASE_DB}"]]
+                        ])
+                    }
+                }
+            }
+        }
+
+        // settings.xmlを作業ディレクトリにコピー
+        stage('Get Settings.xml') {
+            steps {
+                sh """
+                mkdir ${WORK_DIR}
+                cp ${WORKSPACE}/settings.xml ${WORKSPACE}/${WORK_DIR}
+                """
+            }
+        }
+
+        // 各モジュールをビルド（順次実行）
+        stage('Build Base-Db') {
+            steps {
+                sh """
+                mvn clean install -f ${POM_BASE_DB_MAIN} --global-settings ${GLOBAL_SETTINGS} -DskipTests=true \
+                -Dmaven.repo.local=${WORKSPACE}/.m2/repository
+                """
+            }
+        }
+        
+        stage('Build Base-Core') {
+            steps {
+                sh """
+                mvn clean install package -f ${POM_BASE_CORE_PARENT} --global-settings ${GLOBAL_SETTINGS} -DskipTests=true \
+                -Dmaven.repo.local=${WORKSPACE}/.m2/repository
+                """
+            }
+        }
+
+        // base-comsrv-parentをビルド
+        stage('Build Base-Comsrv') {
+            steps {
+                sh """
+                mvn clean install -PPARENTONLY -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS} \
+                -DskipTests=true -Dmaven.repo.local=${WORKSPACE}/.m2/repository
+                """
+            }
+        }
+
+        // base-comsrvをメインビルド
+        stage('Main-Build') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: "${SONAR_CREDENTIALS_ID}", passwordVariable: "SONAR_PASSWORD", usernameVariable: "SONAR_USERNAME")]) {
+                    sh """ 
+                        mvn clean test package checkstyle:checkstyle pmd:pmd pmd:cpd surefire-report:report sonar:sonar \
+                        -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS} \
+                        -Dsonar.login=${SONAR_USERNAME} -Dsonar.password=${SONAR_PASSWORD} \
+                        -Dsonar.projectName=${JOB_BASE_NAME} -Dmaven.repo.local=${WORKSPACE}/.m2/repository
+                    """
+                }
+            }
+        }
+
+        // Nexusにリソースをデプロイ
+        stage('Nexus-Deploy') {
+            when {
+                expression { IS_DEPLOY_SKIP != true }
+            }
+            steps {
+                sh """ 
+                    mvn deploy -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS} -DskipTests=true \
+                    -Dmaven.repo.local=${WORKSPACE}/.m2/repository
+                """
+            }
+        }
+
+        // 次のパイプラインをトリガー
+        stage('Trigger Next-Pipeline') {
+            when {
+                expression { IS_DEPLOY_SKIP != true }
+            }
+            steps {
+                script {
+                    build job: "${params.NEXT_PIPELINE}", parameters: [
+                        [$class: "BooleanParameterValue", name: "IS_TRIGGER", value: true]
+                    ]
+                }
+            }
+        }
+    }
+
+    // テスト結果を常に報告
+    post {
+        always {
+            junit "${TEST_REPORTS}"
+        }
+    }
+}

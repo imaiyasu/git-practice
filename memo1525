@@ -1,0 +1,192 @@
+オンプレミス環境でのコンテナ脆弱性診断ツールについて、用途や特徴に応じたオススメの順と、それぞれのメリット・デメリットを以下にまとめます。さらに、各ツールの実装例も提供します。
+
+オススメ順
+
+	1.	Trivy
+	2.	Anchore Engine
+	3.	Clair
+	4.	Sysdig Secure
+	5.	OpenSCAP
+
+1. Trivy
+
+オススメ度: ⭐⭐⭐⭐⭐
+
+メリット
+
+	•	シンプルで軽量: 導入や設定が簡単で、インストール後すぐに使用可能。
+	•	幅広いスキャン対象: コンテナイメージ以外にもファイルシステムやソースコードの依存関係をスキャン。
+	•	オープンソースかつ無料: コストがかからず、オープンソースのメリットを享受できる。
+
+デメリット
+
+	•	サポートが限られる: コミュニティサポートが中心。
+	•	詳細なポリシー制御が難しい: 高度なポリシー制御が必要な場合には向かない。
+
+実装例（Jenkins Pipeline）
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'docker build -t my-image:latest .'
+            }
+        }
+        stage('Vulnerability Scan') {
+            steps {
+                sh 'trivy image my-image:latest'
+            }
+        }
+    }
+}
+
+2. Anchore Engine
+
+オススメ度: ⭐⭐⭐⭐⭐
+
+メリット
+
+	•	無料のエンタープライズレベルのスキャン: 無料でありながら多機能で、ポリシーエンジンを利用した高度な制御が可能。
+	•	APIベース: REST APIを通じた管理やスキャン結果の取得が可能で、CI/CDパイプラインとの統合が容易。
+
+デメリット
+
+	•	セットアップが複雑: Dockerコンテナとしての設定やAPIの使用方法を学習する必要がある。
+	•	リソース消費: 動作時のリソース消費が比較的大きい。
+
+実装例（Jenkins Pipeline）
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'docker build -t my-image:latest .'
+            }
+        }
+        stage('Add Image to Anchore') {
+            steps {
+                sh 'anchore-cli image add my-image:latest'
+            }
+        }
+        stage('Vulnerability Scan') {
+            steps {
+                sh 'anchore-cli image vuln my-image:latest all'
+            }
+        }
+    }
+}
+
+3. Clair
+
+オススメ度: ⭐⭐⭐⭐
+
+メリット
+
+	•	高精度な静的解析: コンテナイメージの静的解析に強みがある。
+	•	オープンソース: 無料であり、継続的な開発と更新が行われている。
+
+デメリット
+
+	•	設定とAPIの理解が必要: 他のツールと比べてAPIベースの設定が複雑で、セットアップに時間がかかる。
+	•	定期スキャン機能がない: スキャンは手動でトリガーする必要があり、自動化がやや面倒。
+
+実装例（Clair APIを使用）
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'docker build -t my-image:latest .'
+            }
+        }
+        stage('Push to Registry') {
+            steps {
+                sh 'docker push <your-private-registry>/my-image:latest'
+            }
+        }
+        stage('Scan with Clair') {
+            steps {
+                // Clairスキャン用のAPIリクエストを送信
+                sh '''
+                    curl -X POST -H "Content-Type: application/json" -d '
+                    {
+                        "image": "<your-private-registry>/my-image:latest"
+                    }' http://clair-server:6060/v1/layers
+                '''
+            }
+        }
+    }
+}
+
+4. Sysdig Secure
+
+オススメ度: ⭐⭐⭐⭐
+
+メリット
+
+	•	商用サポートと信頼性: Sysdigのエンタープライズサポートを利用でき、セキュリティ対応も迅速。
+	•	ランタイムモニタリング: 脆弱性診断に加え、コンテナのランタイムセキュリティ監視も可能。
+
+デメリット
+
+	•	有料プランが必要: 基本的に有料であり、導入コストがかかる。
+	•	エージェントインストールが必要: コンテナに専用エージェントをインストールして動作させるためのセットアップが必要。
+
+実装例（Sysdig Secure CLIを使用）
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'docker build -t my-image:latest .'
+            }
+        }
+        stage('Vulnerability Scan with Sysdig') {
+            steps {
+                sh 'sysdig-cli scan my-image:latest'
+            }
+        }
+    }
+}
+
+5. OpenSCAP
+
+オススメ度: ⭐⭐⭐
+
+メリット
+
+	•	SCAP対応: セキュリティポリシーやコンプライアンスに基づく診断が可能で、政府機関や企業のセキュリティ基準に沿った診断がしやすい。
+	•	多用途: Dockerイメージだけでなく、ファイルシステムやホスト全体のセキュリティチェックにも利用可能。
+
+デメリット
+
+	•	Docker専用ではないため複雑: 他の用途にも対応しているため、Dockerコンテナの脆弱性診断には少し手間がかかる。
+	•	インストールと設定が複雑: OpenSCAPの設定は技術的な知識が必要で、他ツールよりも使い勝手が劣る。
+
+実装例
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'docker build -t my-image:latest .'
+            }
+        }
+        stage('Vulnerability Scan with OpenSCAP') {
+            steps {
+                sh 'oscap-docker image my-image:latest oval eval --results scan-results.xml'
+            }
+        }
+    }
+}
+
+まとめ
+
+	•	最も簡単な選択: Trivy – シンプルかつ効果的、すぐに使えるオープンソースツール
+	•	エンタープライズ用途に適した選択: Anchore Engine – より詳細な脆弱性管理とポリシー適用が可能
+	•	高度な静的解析が必要な場合: Clair – API駆動で大規模なCI/CD環境に対応

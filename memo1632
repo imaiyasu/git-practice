@@ -1,0 +1,59 @@
+Main-Buildステージのどの部分が一番時間がかかっているかを確認するには、各コマンド（テスト、パッケージング、静的解析など）ごとに個別で時間を測定するように変更します。以下のようにtimeコマンドを使うことで、各処理にかかる時間がログに出力され、ボトルネックを特定できます。
+
+Main-Buildステージの修正
+
+以下のようにMain-Buildステージを分割して各処理の時間を計測します。
+
+stage('Main-Build') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: "${SONAR_CREDENTIALS_ID}", passwordVariable: "SONAR_PASSWORD", usernameVariable: "SONAR_USERNAME")]) {
+            sh """
+                echo "=== Running Tests ==="
+                time mvn test -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS}
+                
+                echo "=== Running Package ==="
+                time mvn package -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS}
+                
+                echo "=== Running Checkstyle ==="
+                time mvn checkstyle:checkstyle -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS}
+                
+                echo "=== Running PMD ==="
+                time mvn pmd:pmd -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS}
+                
+                echo "=== Running CPD ==="
+                time mvn pmd:cpd -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS}
+                
+                echo "=== Running Surefire Report ==="
+                time mvn surefire-report:report -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS}
+                
+                echo "=== Running Sonar ==="
+                time mvn sonar:sonar \
+                    -Dsonar.login=${SONAR_USERNAME} \
+                    -Dsonar.password=${SONAR_PASSWORD} \
+                    -Dsonar.projectName=${JOB_BASE_NAME} \
+                    -f ${POM_BASE_COMSRV_PARENT} \
+                    --global-settings ${GLOBAL_SETTINGS}
+            """
+        }
+    }
+}
+
+出力確認方法
+
+この修正後、ビルドログに各処理の時間がreal（実行時間）として表示されるようになります。ログの実行時間から、どの部分が最も時間がかかっているか確認できます。
+
+静的解析をスキップする場合
+
+時間を短縮したい場合は、静的解析のコマンド（checkstyle:checkstyle、pmd:pmd、pmd:cpd、surefire-report:report）を一時的にコメントアウトするか、削除して実行時間を短縮できます。
+
+stage('Main-Build') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: "${SONAR_CREDENTIALS_ID}", passwordVariable: "SONAR_PASSWORD", usernameVariable: "SONAR_USERNAME")]) {
+            sh """
+                mvn clean test package -f ${POM_BASE_COMSRV_PARENT} --global-settings ${GLOBAL_SETTINGS}
+            """
+        }
+    }
+}
+
+このように設定すれば、テストとパッケージングのみ実行され、静的解析の処理はスキップされます。

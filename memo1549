@@ -1,0 +1,11 @@
+post {
+    always {
+        script {
+            if (!params.SKIP_TESTS) {  // SKIP_TESTSがfalseの場合のみJUNITを実行
+                junit "${TEST_REPORTS}"
+            } else {
+                echo "テストスキップが有効のため、JUNITレポートの集計をスキップします。"
+            }
+        }
+    }
+}

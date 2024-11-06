@@ -1,0 +1,58 @@
+ローカルで正常に動作するのにJenkinsでエラーが発生する場合、環境の違いにより次のような問題が考えられます。以下の確認ポイントと対処方法を試してみてください。
+
+1. パスの違い
+
+Jenkinsでのファイルパスが異なっている可能性があります。JenkinsではビルドがJenkinsワークスペース内で実行されるため、ローカルと同じ相対パスが使えないことがあります。
+
+	•	Jenkinsのenvironmentセクションで、絶対パスを変数として指定し、CLIやMaven実行時にその変数を使用するようにします。
+	•	パイプライン内でsh 'pwd'などを使い、Jenkins実行環境での実際のパスを確認することも有効です。
+
+2. 依存ファイルのアクセス権限
+
+Jenkinsは、通常専用ユーザー（jenkinsユーザーなど）で実行されます。そのため、Jenkinsユーザーがファイルにアクセスできないことがあります。/jboss-cli-scripts/JAC-1.0.0.jarのような依存ファイルに対する読み取り権限を確認してください。
+
+sudo chmod 644 /jboss-cli-scripts/JAC-1.0.0.jar
+
+3. JDKやMavenのバージョンの違い
+
+Jenkinsで使用しているJDKやMavenのバージョンがローカル環境と異なる可能性があります。特定のバージョンが必要な場合、Jenkinsパイプラインのtoolsセクションでバージョンを指定します。もし指定済みの場合でも、次のように確認してみてください。
+
+tools {
+    jdk 'jdk-17.0.10'
+    maven 'maven_v3.8.6'
+}
+
+4. 環境変数の違い
+
+Jenkinsパイプラインで使用している環境変数がローカルと異なっている可能性があります。Jenkinsで期待される変数が正しく設定されているか、あるいはパイプライン内で必要な環境変数が渡されているか確認します。
+
+echo "WORKSPACE: ${WORKSPACE}"
+echo "GITLAB_DOMAIN: ${params.GITLAB_DOMAIN}"
+
+Jenkins環境でのみ使う変数があれば、Jenkinsfile内で環境変数を明示的に設定してください。
+
+5. ファイルの存在確認
+
+Jenkins環境で、依存するファイルやディレクトリがビルド前に正しく存在しているか確認します。fileExistsメソッドを使用して、パスや依存ファイルの存在確認をJenkinsfile内で行うと、エラー箇所の特定が容易です。
+
+steps {
+    script {
+        if (!fileExists('/jboss-cli-scripts/JAC-1.0.0.jar')) {
+            error('JAC-1.0.0.jar file not found in /jboss-cli-scripts')
+        }
+    }
+}
+
+6. Mavenの詳細ログを確認
+
+Jenkinsでは、エラーの発生箇所を特定するためにMavenの詳細ログを有効化します。-Xオプションを追加することで、依存関係の解決やファイルパスの問題などの詳細情報を取得できます。
+
+sh """
+mvn clean install -f ${POM_APM_COMSRV_WEBAPP_PKG} --global-settings ${GLOBAL_SETTINGS} -DcomTypeA=${params.COMTYPEA} -DskipTests=true -X
+"""
+
+7. Jenkinsのプラグインやネットワーク設定の確認
+
+Jenkins環境に特有の制約として、ネットワーク接続やプラグインの設定が原因で発生することもあります。特に、依存関係の取得が必要な場合や外部サーバーにアクセスする場合、ネットワークの制約がないかを確認してください。また、必要なMavenプラグインやJDKがJenkins環境でインストールされていることも確認しましょう。
+
+これらの確認を行い、特定の環境変数や依存関係の問題を特定することで、Jenkins特有のエラーを解決できる可能性が高まります。

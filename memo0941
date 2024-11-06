@@ -1,0 +1,282 @@
+--exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter
+[standalone@embedded /] module add 
+--name=com.turkcelltech.jac 
+--resources=/jboss-cli-scripts/JAC-1.0.0.jar 
+--dependencies=com.turkcelltech.jac
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  02:39 min
+[INFO] Finished at: 2024-11-05T10:56:51Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.wildfly.plugins:wildfly-jar-maven-plugin:7.0.1.Final:package (default) on project blender-he2-pkg-apm-comsrv-webapp: Packaging wildfly failed: CLI execution failed:WARN: can't find jboss-cli.xml. Using default configuration values.
+[ERROR] Nov 05, 2024 10:56:45 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [disconnected /] embed-server --jboss-home=/var/jenkins_home/jobs/blender-he2-kanden-apm-comsrv-develop-stph-v1.2.0/workspace/blender-he2-pkg-apm-comsrv-webapp/target/bootable-jar-build-artifacts/wildfly --std-out=discard
+[ERROR] Nov 05, 2024 10:56:46 AM org.wildfly.core.embedded.LoggerContext$JBossLoggingModuleLogger greeting
+[ERROR] INFO: JBoss Modules version 2.0.2.Final
+[ERROR] Nov 05, 2024 10:56:46 AM org.jboss.logmanager.JBossLoggerFinder getLogger
+[ERROR] ERROR: The LogManager accessed before the "java.util.logging.manager" system property was set to "org.jboss.logmanager.LogManager". Results may be unexpected.
+[ERROR] Nov 05, 2024 10:56:46 AM org.jboss.msc.service.ServiceContainerImpl <clinit>
+[ERROR] INFO: JBoss MSC version 1.4.13.Final
+[ERROR] Nov 05, 2024 10:56:46 AM org.jboss.threads.Version <clinit>
+[ERROR] INFO: JBoss Threads version 2.4.0.Final
+[ERROR] Nov 05, 2024 10:56:46 AM org.jboss.as.server.ApplicationServerService start
+[ERROR] INFO: WFLYSRV0049: WildFly Full 26.1.3.Final (WildFly Core 18.1.2.Final) starting
+[ERROR] Nov 05, 2024 10:56:48 AM org.wildfly.security.Version <clinit>
+[ERROR] INFO: ELY00001: WildFly Elytron version 1.19.1.Final
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.patching.installation.InstallationManagerService start
+[ERROR] INFO: WFLYPAT0050: WildFly Full cumulative patch ID is: base, one-off patches include: none
+[ERROR] Nov 05, 2024 10:56:50 AM org.wildfly.extension.elytron.KeyStoreService start
+[ERROR] WARN: WFLYELY00023: KeyStore file '/var/jenkins_home/jobs/blender-he2-kanden-apm-comsrv-develop-stph-v1.2.0/workspace/blender-he2-pkg-apm-comsrv-webapp/target/bootable-jar-build-artifacts/wildfly/standalone/configuration/application.keystore' does not exist. Used blank.
+[ERROR] Nov 05, 2024 10:56:50 AM org.wildfly.extension.elytron.SSLDefinitions$1 lambda$getValueSupplier$0
+[ERROR] WARN: WFLYELY01084: KeyStore /var/jenkins_home/jobs/blender-he2-kanden-apm-comsrv-develop-stph-v1.2.0/workspace/blender-he2-pkg-apm-comsrv-webapp/target/bootable-jar-build-artifacts/wildfly/standalone/configuration/application.keystore not found, it will be auto generated on first use with a self-signed certificate for host localhost
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.server.suspend.SuspendController resume
+[ERROR] INFO: WFLYSRV0212: Resuming server
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.server.BootstrapListener done
+[ERROR] INFO: WFLYSRV0025: WildFly Full 26.1.3.Final (WildFly Core 18.1.2.Final) started in 4318ms - Started 49 of 71 services (23 services are lazy, passive or on-demand) - Server configuration file in use: standalone.xml
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: Warning! The CLI is running in a non-modular environment and cannot load commands from management extensions.
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/json-formatter=LOGSTASH:add(date-format=uuuu-MM-dd'T'HH:mm:ss.SSSxxxxx,pretty-print=false,exception-output-type=formatted,
+[ERROR] key-overrides=[exception-caused-by="exception_caused_by", 
+[ERROR] exception-circular-reference="exception_circular_reference", 
+[ERROR] exception-frame="exception_frame", 
+[ERROR] exception-frame-class="exception_frame_class", 
+[ERROR] exception-frame-line="exception_frame_line", 
+[ERROR] exception-frame-method="exception_frame_method", 
+[ERROR] exception-frames="exception_frames", 
+[ERROR] exception-message="exception_message", 
+[ERROR] exception-reference-id="exception_reference_id", 
+[ERROR] exception-suppressed="exception_suppressed", 
+[ERROR] exception-type="exception_type", 
+[ERROR] host-name="host_name", 
+[ERROR] logger-class-name="logger_class_name", 
+[ERROR] logger-name="logger_name", 
+[ERROR] process-id="process_id", 
+[ERROR] process-name="process_name", 
+[ERROR] source-class-name="source_class_name", 
+[ERROR] source-file-name="source_file_name", 
+[ERROR] source-line-number="source_line_number", 
+[ERROR] source-method-name="source_method_name", 
+[ERROR] source-module-name="source_module_name", 
+[ERROR] source-module-version="source_module_version", 
+[ERROR] stack-trace="stack_trace", 
+[ERROR] thread-id="thread_id", 
+[ERROR] thread-name="thread_name", 
+[ERROR] timestamp="@timestamp"],meta-data=[@version=1])
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/console-handler=CONSOLE:write-attribute(name=level,value=INFO)
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/console-handler=CONSOLE:write-attribute(name=named-formatter,value=LOGSTASH)
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:50 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/root-logger=ROOT:remove-handler(name=FILE)
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/periodic-rotating-file-handler=FILE:remove
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/pattern-formatter=COLOR-PATTERN:remove
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/logger=jp.co.melco.hq.blender.fw:add
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/logger=jp.co.melco.hq.blender.fw:write-attribute(name=level,value=WARN)
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/logger=jp.co.melco.hq.blender.fw.web.ui2.interceptor.ReqDumpInterceptor:add
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/logger=jp.co.melco.hq.blender.fw.web.ui2.interceptor.ReqDumpInterceptor:write-attribute(name=level,value=DEBUG)
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/logger=jp.co.melco.blender.bnm.server.console.biz.process.eqpctrl.unique.EquipControlWatchProcess:add
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/logger=jp.co.melco.blender.bnm.server.console.biz.process.eqpctrl.unique.EquipControlWatchProcess:write-attribute(name=level,value=DEBUG)
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/logger=jp.co.melco.blender.he.core.hecom.agent.ResponseHandler:add
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] /subsystem=logging/logger=jp.co.melco.blender.he.core.hecom.agent.ResponseHandler:write-attribute(name=level,value=DEBUG)
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: {"outcome" => "success"}
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] data-source add 
+[ERROR] --name=APM_DS 
+[ERROR] --jndi-name=java:jboss/datasources/APM_DS 
+[ERROR] --connection-url=jdbc:postgresql://$${he-db-apm.host:he-db-srv}:$${he-db-apm.port:5432}/$${he-db-apm.dbname:postgres} 
+[ERROR] --driver-name=postgresql 
+[ERROR] --min-pool-size=$${POSTGRESQL_MIN_POOL_SIZE:20} 
+[ERROR] --max-pool-size=$${POSTGRESQL_MAX_POOL_SIZE:20} 
+[ERROR] --user-name=$${he-db-apm.username:APM} 
+[ERROR] --password=$${he-db-apm.password:apm} 
+[ERROR] --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker 
+[ERROR] --validate-on-match=true 
+[ERROR] --background-validation=true 
+[ERROR] --background-validation-millis=60000 
+[ERROR] --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] data-source add 
+[ERROR] --name=CORE_DS 
+[ERROR] --jndi-name=java:jboss/datasources/CORE_DS 
+[ERROR] --connection-url=jdbc:postgresql://$${he-db-core.host:he-db-srv}:$${he-db-core.port:5432}/$${he-db-core.dbname:postgres} 
+[ERROR] --driver-name=postgresql 
+[ERROR] --min-pool-size=$${POSTGRESQL_MIN_POOL_SIZE:20} 
+[ERROR] --max-pool-size=$${POSTGRESQL_MAX_POOL_SIZE:20} 
+[ERROR] --user-name=$${he-db-core.username:CORE} 
+[ERROR] --password=$${he-db-core.password:core} 
+[ERROR] --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker 
+[ERROR] --validate-on-match=true 
+[ERROR] --background-validation=true 
+[ERROR] --background-validation-millis=60000 
+[ERROR] --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] data-source add 
+[ERROR] --name=COMSRV_DS 
+[ERROR] --jndi-name=java:jboss/datasources/COMSRV_DS 
+[ERROR] --connection-url=jdbc:postgresql://$${he-db-comsrv.host:he-db-srv}:$${he-db-comsrv.port:5432}/$${he-db-comsrv.dbname:postgres} 
+[ERROR] --driver-name=postgresql 
+[ERROR] --min-pool-size=$${POSTGRESQL_MIN_POOL_SIZE:20} 
+[ERROR] --max-pool-size=$${POSTGRESQL_MAX_POOL_SIZE:20} 
+[ERROR] --user-name=$${he-db-comsrv.username:COMSRV} 
+[ERROR] --password=$${he-db-comsrv.password:comsrv} 
+[ERROR] --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker 
+[ERROR] --validate-on-match=true 
+[ERROR] --background-validation=true 
+[ERROR] --background-validation-millis=60000 
+[ERROR] --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.cli.impl.CommandContextImpl print
+[ERROR] INFO: [standalone@embedded /] module add 
+[ERROR] --name=com.turkcelltech.jac 
+[ERROR] --resources=/jboss-cli-scripts/JAC-1.0.0.jar 
+[ERROR] --dependencies=com.turkcelltech.jac
+[ERROR] Nov 05, 2024 10:56:51 AM org.jboss.as.server.ApplicationServerService stop
+[ERROR] INFO: WFLYSRV0050: WildFly Full 26.1.3.Final (WildFly Core 18.1.2.Final) stopped in 8ms
+[ERROR] Exception in thread "main" java.lang.reflect.InvocationTargetException
+[ERROR] 	at jdk.internal.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)
+[ERROR] 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+[ERROR] 	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+[ERROR] 	at org.wildfly.plugins.bootablejar.maven.cli.CLIWrapper.handle(CLIWrapper.java:82)
+[ERROR] 	at org.wildfly.plugins.bootablejar.maven.cli.CLIForkedExecutor.main(CLIForkedExecutor.java:49)
+[ERROR] Caused by: org.jboss.as.cli.CommandLineException: java.util.concurrent.ExecutionException: org.jboss.as.cli.CommandLineException: Failed to locate /jboss-cli-scripts/JAC-1.0.0.jar, if you defined a nonexistent resource on purpose you should use the --allow-nonexistent-resources option
+[ERROR] 	at org.jboss.as.cli.impl.CommandContextImpl.execute(CommandContextImpl.java:943)
+[ERROR] 	at org.jboss.as.cli.impl.CommandContextImpl.handleLegacyCommand(CommandContextImpl.java:1941)
+[ERROR] 	at org.jboss.as.cli.impl.CommandContextImpl.handle(CommandContextImpl.java:880)
+[ERROR] 	... 5 more
+[ERROR] Caused by: java.util.concurrent.ExecutionException: org.jboss.as.cli.CommandLineException: Failed to locate /jboss-cli-scripts/JAC-1.0.0.jar, if you defined a nonexistent resource on purpose you should use the --allow-nonexistent-resources option
+[ERROR] 	at java.base/java.util.concurrent.FutureTask.report(Unknown Source)
+[ERROR] 	at java.base/java.util.concurrent.FutureTask.get(Unknown Source)
+[ERROR] 	at org.jboss.as.cli.impl.CommandExecutor.execute(CommandExecutor.java:732)
+[ERROR] 	at org.jboss.as.cli.impl.CommandExecutor.execute(CommandExecutor.java:713)
+[ERROR] 	at org.jboss.as.cli.impl.CommandContextImpl.lambda$handleLegacyCommand$4(CommandContextImpl.java:1942)
+[ERROR] 	at org.jboss.as.cli.impl.CommandContextImpl.execute(CommandContextImpl.java:930)
+[ERROR] 	... 7 more
+[ERROR] Caused by: org.jboss.as.cli.CommandLineException: Failed to locate /jboss-cli-scripts/JAC-1.0.0.jar, if you defined a nonexistent resource on purpose you should use the --allow-nonexistent-resources option
+[ERROR] 	at org.jboss.as.cli.handlers.module.ASModuleHandler.addModule(ASModuleHandler.java:380)
+[ERROR] 	at org.jboss.as.cli.handlers.module.ASModuleHandler.doHandle(ASModuleHandler.java:346)
+[ERROR] 	at org.jboss.as.cli.handlers.CommandHandlerWithHelp.handle(CommandHandlerWithHelp.java:89)
+[ERROR] 	at org.jboss.as.cli.impl.CommandExecutor$2.lambda$build$0(CommandExecutor.java:704)
+[ERROR] 	at org.jboss.as.cli.impl.CommandExecutor.lambda$execute$0(CommandExecutor.java:727)
+[ERROR] 	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+[ERROR] 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+[ERROR] 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+[ERROR] 	at java.base/java.lang.Thread.run(Unknown Source)
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Get Apm-Comsrv-Webapp-PKG)
+Stage "Get Apm-Comsrv-Webapp-PKG" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (ReCheckout Apm-Comsrv)
+Stage "ReCheckout Apm-Comsrv" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Get Wildfly-Com)
+Stage "Get Wildfly-Com" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Main-Build)
+Stage "Main-Build" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Nexus-Deploy)
+Stage "Nexus-Deploy" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy Create-Image)
+Stage "Deploy Create-Image" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Pull From GitLab)
+Stage "Pull From GitLab" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to ECR)
+Stage "Push to ECR" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (sed files)
+Stage "sed files" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (S3 Upload-File)
+Stage "S3 Upload-File" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE

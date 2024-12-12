@@ -1,0 +1,109 @@
+以下は、ローカル環境でバックエンドとフロントエンドをDockerコンテナとして実行するための docker-compose.yml の作成と手順です。
+
+1. docker-compose.yml 作成
+
+以下の内容を docker-compose.yml としてプロジェクトのルートディレクトリに保存してください。
+
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # バックエンドのポート
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=yourpassword
+      - POSTGRES_DB=game_manager
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # フロントエンドのポート
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5432:5432" # PostgreSQLのポート
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_DB: game_manager
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+
+2. 設定の確認
+
+バックエンド環境変数
+
+backend/main.go で環境変数を読み込むように修正します。
+
+main.go
+
+import (
+	"os"
+	"fmt"
+)
+
+func getDatabaseDSN() string {
+	host := os.Getenv("POSTGRES_HOST")
+	port := os.Getenv("POSTGRES_PORT")
+	user := os.Getenv("POSTGRES_USER")
+	password := os.Getenv("POSTGRES_PASSWORD")
+	dbName := os.Getenv("POSTGRES_DB")
+
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbName)
+}
+
+gorm.Open() の部分を以下のように変更します:
+
+db, err := gorm.Open(postgres.Open(getDatabaseDSN()), &gorm.Config{})
+
+3. コンテナのビルドと起動
+
+以下のコマンドを実行して、サービスをローカルで起動します。
+	1.	Dockerイメージをビルド:
+
+docker-compose build
+
+
+	2.	サービスを起動:
+
+docker-compose up
+
+
+	3.	動作確認:
+	•	バックエンド: http://localhost:8080/health
+	•	フロントエンド: http://localhost:3000
+
+4. 動作確認のポイント
+	•	PostgreSQLが正常に起動しているか確認するためには以下のコマンドを使用します:
+
+docker exec -it postgres psql -U postgres -d game_manager
+
+
+	•	フロントエンドがバックエンドと通信できない場合、 frontend/src/services 以下にあるAPIエンドポイントが localhost を指していることを確認してください。
+
+例:
+
+const API_BASE = "http://localhost:8080";
+
+5. 次のアクションの提案
+
+a. ログ用のDockerボリュームを追加し、コンテナ内のログ管理を改善
+b. フロントエンドとバックエンド間の通信を CORS 設定で適切に制御
